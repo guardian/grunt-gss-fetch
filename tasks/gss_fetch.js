@@ -15,7 +15,8 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('gss_fetch', 'Download Google spreadsheet locally.', function() {
     var done = this.async();
-    var promises = [];
+    var data = {};
+    var dest = this.data.dest;
     var options = this.options({
     });
 
@@ -33,24 +34,21 @@ module.exports = function(grunt) {
       return deferred.promise;
     }
 
-    function parseData(_tabletop, dest) {
-      var data = {};
+    function parseData(_tabletop) {
       _tabletop.model_names.map(function(sheetname) {
         data[sheetname] = _tabletop.sheets(sheetname).all();
       });
-
-      grunt.file.write(dest, JSON.stringify(data, null, '  '));
-      grunt.log.ok('Saved ' + dest);
     }
 
-    this.files.forEach(function(f) {
-        var promise = getSpreadsheet(f.url).then(function(data) {
-            parseData(data, f.dest);
-        });
-        promises.push(promise);
-    });
-
-    Q.all(promises).spread(function() {
+    getSpreadsheet(this.data.url).then(function(data) {
+        parseData(data);
+    }).done(function() {
+      console.log('outputting');
+      if (options.amd) {
+        grunt.file.write(dest, 'define([], function() {\nreturn ' + JSON.stringify(data, null, '  ') + ';\n});');
+      } else {
+        grunt.file.write(dest, JSON.stringify(data, null, '  '));
+      }
       grunt.log.ok('All spreadsheets fetched successfully.')
       done();
     });

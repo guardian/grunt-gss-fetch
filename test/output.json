@@ -1,4 +1,5 @@
-{
+define([], function() {
+return {
   "Another Sheet": [
     {
       "animal": "Dog",
@@ -33,4 +34,5 @@
       "rowNumber": 3
     }
   ]
-}
+};
+})
