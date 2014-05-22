@@ -31,7 +31,10 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     gss_fetch: {
         options: {
-            amd: true
+            amd: true,
+            process: function(data) {
+                console.log(data);
+            }
         },
         prod: {
             url: 'https://docs.google.com/spreadsheet/pub?key=0AjNAJ9Njg5YTdHd2MkpNVG9nN0ZPVnhSaWtjS0lfRUE&output=html',

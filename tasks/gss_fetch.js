@@ -43,13 +43,16 @@ module.exports = function(grunt) {
     getSpreadsheet(this.data.url).then(function(data) {
         parseData(data);
     }).done(function() {
-      console.log('outputting');
+      if (options.process && typeof options.process === 'function') {
+            data = options.process(data);
+      }
+
       if (options.amd) {
         grunt.file.write(dest, 'define([], function() {\nreturn ' + JSON.stringify(data, null, '  ') + ';\n});');
       } else {
         grunt.file.write(dest, JSON.stringify(data, null, '  '));
       }
-      grunt.log.ok('All spreadsheets fetched successfully.')
+      grunt.log.ok('All spreadsheets fetched successfully.');
       done();
     });
   });
